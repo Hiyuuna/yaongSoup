@@ -10,8 +10,8 @@
 #define BOWL_POS (ROOM_WIDTH - 2)
 
 void printIntro();
-void printState(int soupCount, int intimacy, int mood, int cp); // mood와 cp 추가
-void drawRoom(int catPos);
+void printState(int soupCount, int intimacy, int mood, int cp); 
+void drawRoom(int catPos, int S, int T); //S = 스크래처 있음 , T = 타워 있음 
 void delay(int millis);
 int rollDice();
 void clearScreen();
@@ -22,7 +22,7 @@ int main(void) {
     char catName[20];
     int soupCount = 0;
 	int intimacy = 2; //집사와의 친밀도 (0~4)
-    int catPos = HOME_POS; 
+  
     int mood = 3; //기분 
     int cp = 0;
     int catPos = HOME_POS;
@@ -126,21 +126,38 @@ void printState(int soupCount, int intimacy, int mood, int cp) {
        "골골송을 부릅니다."
 	};
 
+    const char* messages[] = {
+    "곁에 오는 것조차 싫어합니다.",
+    "간식 자판기 취급입니다.",
+    "그럭저럭 쓸 만한 집사입니다.",
+    "훌륭한 집사로 인정 받고 있습니다.",
+    "집사 껌딱지입니다."
+    };
+
     printf("==================== 현재 상태 ===================\n");
     printf("현재까지 만든 수프: %d개\n", soupCount);
-    printf("CP: %d 포인트\n", cp); //cp추가
-    printf("기분(0~3): %d\n%s\n", mood, moodMessages[mood]); //mood 추가
+    printf("CP: %d 포인트\n", cp); 
+
+    printf("%s의 기분(0~3): %d\n", "쫀떡이", mood);            //수정    
+    printf("%s\n", moodMessages[mood]);
+
+
     printf("집사와의 관계(0~4): %d\n", intimacy);
     printf("%s\n", messages[intimacy]);
     printf("==================================================\n");
 }
 
-void drawRoom(int catPos) {
+void drawRoom(int catPos, int S, int T) {
     printf("\n");
     printf("##########\n#");
     for (int i = 1; i <= ROOM_WIDTH - 2; i++) {
         if (i == HOME_POS) printf("H");
         else if (i == BOWL_POS) printf("B");
+
+        else if (S && i == 3) printf("S"); //스크래처
+        else if (T && i == 5) printf("T"); //타워
+
+
         else printf(" ");
     }
     printf("#\n#");
@@ -166,8 +183,8 @@ void clearScreen() {
 
 void printIntro() {
     printf("====================================\n");
-	printf("|       야옹이와 수프 v2.0         |\n");  //version 2.0
-    printf("|      ***기분 시스템 추가        |\n"); 
+	printf("|       야옹이와 수프 v2.1        |\n");  //version 2.1 
+    printf("|      ***상태창, 방 변경     |\n"); 
     printf("|                                  |\n");
     printf("|      ( =ᵕᆺᵕ= )                    |\n");
     printf("|                                  |\n");
