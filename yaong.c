@@ -12,11 +12,11 @@
 void printIntro();
 void printState(int soupCount, int intimacy, int mood, int cp); 
 void drawRoom(int catPos, int S, int T); //S = 스크래처 있음 , T = 타워 있음 
-
 void updateBadMood(int* mood, int intimacy, const char* catName); //기분나빠짐
 void delay(int millis);
 int rollDice();
 void clearScreen();
+
 
 //메인
 int main(void) {
@@ -24,12 +24,13 @@ int main(void) {
 
     char catName[20];
     int soupCount = 0;
-	int intimacy = 2; //집사와의 친밀도 (0~4)
+	int intimacy = 2; 
   
-    int mood = 3; //기분 
+    int mood = 3;  
     int cp = 0;
     int catPos = HOME_POS;
-
+    int S = 0;  
+    int T = 0;  
 
     printIntro();
     printf("야옹이의 이름을 지어주세요: ");
@@ -84,19 +85,59 @@ int main(void) {
 
         Sleep(500);
 
-        // 야옹이 이동
-        printf("\n%s 이동: 집사와 친밀할수록 냄비 쪽으로 갈 확률이 높아집니다.\n", catName);
-        int dice = rollDice();
-        printf("주사위를 굴립니다... %d 나왔습니다!\n", dice);
+        // 야옹이 기분 기반 이동
+        printf("\n%s의 기분에 따라 행동합니다.\n", catName);
 
-        if (dice >= (6 - intimacy)) {
-            printf("냄비 쪽으로 움직입니다.\n");
-            if (catPos < BOWL_POS - 1) catPos++;
+        if (mood == 0) {
+            if (catPos > HOME_POS + 1) {
+                catPos--;
+                printf("기분이 매우 나쁜 %s은(는) 집으로 향합니다.\n", catName);
+            }
+            else {
+                printf("%s은(는) 이미 집 근처입니다.\n", catName);
+            }
         }
-        else {
-            printf("집 쪽으로 움직입니다.\n");
-            if (catPos > HOME_POS + 1) catPos--;
+        else if (mood == 1) {
+            if (S || T) {
+                int target = -1;
+                if (S && T) {
+                    target = (abs(catPos - 3) <= abs(catPos - 5)) ? 3 : 5;
+                }
+                else if (S) {
+                    target = 3;
+                }
+                else if (T) {
+                    target = 5;
+                }
+
+                if (target > catPos && catPos < BOWL_POS - 1) {
+                    catPos++;
+                }
+                else if (target < catPos && catPos > HOME_POS + 1) {
+                    catPos--;
+                }
+
+                printf("%s은(는) 심심해서 놀이기구(%c) 쪽으로 이동합니다.\n", catName, (target == 3 ? 'S' : 'T'));
+            }
+            else {
+                printf("놀 거리가 없어서 기분이 매우 나빠집니다!\n");
+                if (mood > 0) mood--;
+            }
         }
+        else if (mood == 2) {
+            printf("%s은(는) 기분좋게 식빵을 굽고 있습니다.\n", catName);
+        }
+        else if (mood == 3) {
+            if (catPos < BOWL_POS - 1) {
+                catPos++;
+                printf("%s은(는) 골골송을 부르며 수프를 만들러 갑니다.\n", catName);
+            }
+            else {
+                printf("%s은(는) 이미 냄비 근처입니다.\n", catName);
+            }
+        }
+
+        
 
         Sleep(500);
 
@@ -208,8 +249,8 @@ void clearScreen() {
 
 void printIntro() {
     printf("====================================\n");
-	printf("|       야옹이와 수프 v2.2        |\n");  //version 2.1 
-    printf("|      ***기분나빠짐 기능 추가     |\n"); 
+	printf("|       야옹이와 수프 v2.3       |\n");  //version 2.3
+    printf("|      ***이동 업데이트     |\n"); 
     printf("|                                  |\n");
     printf("|      ( =ᵕᆺᵕ= )                    |\n");
     printf("|                                  |\n");
