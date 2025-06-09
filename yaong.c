@@ -31,6 +31,7 @@ int main(void) {
     int catPos = HOME_POS;
     int S = 0;  
     int T = 0;  
+    int arrivedHome = 0;
 
     printIntro();
     printf("야옹이의 이름을 지어주세요: ");
@@ -40,7 +41,7 @@ int main(void) {
     clearScreen();
 
     while (1) {
-		printState(soupCount, intimacy, mood, cp); 
+		printState(soupCount, intimacy, mood, cp, catName); 
         drawRoom(catPos, S, T);
 
         updateBadMood(&mood, intimacy, catName);
@@ -141,11 +142,34 @@ int main(void) {
 
         Sleep(500);
 
-        // 야옹이 행동
+        // 야옹이 행동 추가
         if (catPos == HOME_POS) {
             printf("\n%s는 자신의 집에서 편안히 쉬고 있습니다.\n", catName);
+            if (!arrivedHome && mood < 3) {
+                int prev = mood;
+                mood++;
+                printf("집에서 쉰 덕분에 기분이 좋아졌습니다: %d → %d\n", prev, mood);
+            }
+            arrivedHome = 0;
         }
-        else if (catPos == BOWL_POS) {
+        else {
+            arrivedHome = (catPos == HOME_POS);
+        }
+
+        if (catPos == 3 && S && mood < 3) {
+            int prev = mood;
+            mood++;
+            printf("%s은(는) 스크래처를 긁고 놀았습니다. 기분이 조금 좋아졌습니다: %d → %d\n", catName, prev, mood);
+        }
+
+        if (catPos == 5 && T && mood < 3) {
+            int prev = mood;
+            mood += 2;
+            if (mood > 3) mood = 3;
+            printf("%s은(는) 캣타워를 뛰어다닙니다. 기분이 제법 좋아졌습니다: %d → %d\n", catName, prev, mood);
+        }
+
+        if (catPos == BOWL_POS) {
             printf("\n%s이(가) 수프를 만듭니다!\n", catName);
             int soupType = rand() % 3;
             if (soupType == 0) printf("감자 수프를 만들었습니다!\n");
@@ -163,7 +187,7 @@ int main(void) {
 
 
 //상태창
-void printState(int soupCount, int intimacy, int mood, int cp) {
+void printState(int soupCount, int intimacy, int mood, int cp, const char* catName) {
     const char* moodMessages[] = {                           
         
        "기분이 매우 나쁩니다.",
@@ -183,7 +207,7 @@ void printState(int soupCount, int intimacy, int mood, int cp) {
     printf("==================== 현재 상태 ===================\n");
     printf("현재까지 만든 수프: %d개\n", soupCount);
     printf("CP: %d 포인트\n", cp); 
-    printf("%s의 기분(0~3): %d\n", "쫀떡이", mood);            //수정    
+    printf("%s의 기분(0~3): %d\n", catName, mood);            
     printf("%s\n", moodMessages[mood]);
     printf("집사와의 관계(0~4): %d\n", intimacy);
     printf("%s\n", messages[intimacy]);
@@ -249,8 +273,8 @@ void clearScreen() {
 
 void printIntro() {
     printf("====================================\n");
-	printf("|       야옹이와 수프 v2.3       |\n");  //version 2.3
-    printf("|      ***이동 업데이트     |\n"); 
+	printf("|       야옹이와 수프 v2.4       |\n");  //version 2.4
+    printf("|      ***행동 업데이트 완료     |\n"); 
     printf("|                                  |\n");
     printf("|      ( =ᵕᆺᵕ= )                    |\n");
     printf("|                                  |\n");
