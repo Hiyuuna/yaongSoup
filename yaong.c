@@ -12,10 +12,13 @@
 void printIntro();
 void printState(int soupCount, int intimacy, int mood, int cp); 
 void drawRoom(int catPos, int S, int T); //S = 스크래처 있음 , T = 타워 있음 
+
+void updateBadMood(int* mood, int intimacy, const char* catName); //기분나빠짐
 void delay(int millis);
 int rollDice();
 void clearScreen();
 
+//메인
 int main(void) {
     srand((unsigned int)time(NULL));
 
@@ -37,7 +40,9 @@ int main(void) {
 
     while (1) {
 		printState(soupCount, intimacy, mood, cp); 
-        drawRoom(catPos);
+        drawRoom(catPos, S, T);
+
+        updateBadMood(&mood, intimacy, catName);
 
         int choice;
         while (1) {
@@ -116,10 +121,10 @@ int main(void) {
 }
 
 
-
+//상태창
 void printState(int soupCount, int intimacy, int mood, int cp) {
     const char* moodMessages[] = {                           
-        //기분배열 수정
+        
        "기분이 매우 나쁩니다.",
        "심심해합니다.",
        "식빵을 굽습니다.",
@@ -137,11 +142,8 @@ void printState(int soupCount, int intimacy, int mood, int cp) {
     printf("==================== 현재 상태 ===================\n");
     printf("현재까지 만든 수프: %d개\n", soupCount);
     printf("CP: %d 포인트\n", cp); 
-
     printf("%s의 기분(0~3): %d\n", "쫀떡이", mood);            //수정    
     printf("%s\n", moodMessages[mood]);
-
-
     printf("집사와의 관계(0~4): %d\n", intimacy);
     printf("%s\n", messages[intimacy]);
     printf("==================================================\n");
@@ -168,6 +170,29 @@ void drawRoom(int catPos, int S, int T) {
     printf("#\n##########\n");
 }
 
+void updateBadMood(int* mood, int intimacy, const char* catName) {
+    printf("\n아무 이유 없이 기분이 나빠집니다. 고양이니까?\n");
+
+    int badLimit = 6 - intimacy; //기분이 나빠지는 기준선
+    printf("6 - 친밀도 = %d → 주사위 눈이 %d 이하면 기분이 나빠져요.\n", badLimit, badLimit);
+
+    printf("주사위를 굴립니다. 또르르...\n");
+    int dice = rollDice();
+    printf("%d이(가) 나왔습니다.\n", dice);
+
+    if (dice <= badLimit) {
+        if (*mood > 0) {
+            printf("%s의 기분이 나빠집니다: %d → %d\n", catName, *mood, *mood - 1);
+            (*mood)--;
+        }
+        else {
+            printf("기분은 이미 최악입니다...\n");
+        }
+    }
+    else {
+        printf("다행히 기분은 유지됐습니다.\n");
+    }
+}
 void delay(int millis) {
     Sleep(millis);
 }
@@ -183,8 +208,8 @@ void clearScreen() {
 
 void printIntro() {
     printf("====================================\n");
-	printf("|       야옹이와 수프 v2.1        |\n");  //version 2.1 
-    printf("|      ***상태창, 방 변경     |\n"); 
+	printf("|       야옹이와 수프 v2.2        |\n");  //version 2.1 
+    printf("|      ***기분나빠짐 기능 추가     |\n"); 
     printf("|                                  |\n");
     printf("|      ( =ᵕᆺᵕ= )                    |\n");
     printf("|                                  |\n");
