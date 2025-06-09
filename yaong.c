@@ -177,6 +177,12 @@ int main(void) {
             else printf("브로콜리 수프를 만들었습니다!\n");
             soupCount++;
         }
+		// CP 생성 
+        int plus = (mood > 1 ? (mood - 1) : 0) + intimacy;
+        cp += plus;
+        printf("%s의 기분: %d, 친밀도: %d → CP %d 포인트가 생성되었습니다.\n", catName, mood, intimacy, plus);
+        printf("보유 CP: %d 포인트\n", cp);
+
 
         Sleep(2500);
         clearScreen();
@@ -273,8 +279,8 @@ void clearScreen() {
 
 void printIntro() {
     printf("====================================\n");
-	printf("|       야옹이와 수프 v2.4       |\n");  //version 2.4
-    printf("|      ***행동 업데이트 완료     |\n"); 
+	printf("|       야옹이와 수프 v2.5      |\n");  //version 2.5
+    printf("|      ***cp생산 업데이트 완료     |\n"); 
     printf("|                                  |\n");
     printf("|      ( =ᵕᆺᵕ= )                    |\n");
     printf("|                                  |\n");
